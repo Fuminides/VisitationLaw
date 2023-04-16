@@ -7,6 +7,7 @@
 
 import random
 import time
+import pickle
 
 import itertools as it
 import matplotlib.pyplot as plt
@@ -487,3 +488,71 @@ def spatial_plot(data: dict, homes: list, Ngrid: int) -> None:
     plt.imshow(H)
     plt.title('Homes')
     return
+
+def run_PE(par: list) -> [dict, list, int]:
+    """
+    
+    Runs the [referential exploration process.
+    The parameters are fixed defined in the cell
+    below and also in the function (lines 27).
+    
+    The data is stored as a dictionary where the
+    key is a cell in the grid (index by 0, 1, 2...)
+    and the value is a list of feature vectors
+    for each visitor to that cell
+    
+    
+    data[cell_id] = [ f_agent1, f_agent2 ] 
+    
+    where,
+    
+    f_agent1 = [agent_id, f;frequency of visit to cell, home cell , r;distance from home cell to cell , E = r*f]
+    
+    And so on.
+    
+    """
+    
+    # Parameters 
+    [alpha, rho, gamma, R, nu, num_agents] = par
+    num_steps, num_trials, box_size = 10**3, 1,1,
+
+    # Iterate over different individuals
+    Ngrid = 300
+    n_lower, n_upper = 100, 200
+    # It creates all possible x,y pairs in the range
+    possible_homes = [(i,j) for i in range(n_lower, n_upper) for j in range(n_lower,n_upper)]
+    # Homes are randomly chosen cells
+    homes = [random.choice(possible_homes) for _ in range(num_agents)]
+
+    # Do simulation
+    data = {}
+    # t1 = time.time()
+    for i,(x_start, y_start) in enumerate(homes):
+        agent_id = i
+        x_curr, y_curr = x_start, y_start
+
+        # data dict is updated after the exploration
+        data = preferential_exploration(num_steps,data,alpha,rho,gamma,R,nu,x_curr,y_curr, \
+                                          agent_id,Ngrid,box_size)
+    # t2 = time.time()
+    # print('took {:.2f} mins'.format((t2-t1)/60.0))
+
+    # Save data
+    # filename = 'data/EPE_lattice_alpha_{}_rho_{}_gamma_{}_R_{}_nu_{}_Nagent_{}.pkl'.format(alpha, \
+    #                                                                        rho,gamma,R,nu,num_agents)
+    # with open(filename,'wb') as g:
+    #     pickle.dump(data,g)
+     
+    # Plot data
+    # spatial_plot(data,homes,Ngrid)
+        
+    return data, homes, Ngrid
+
+if __name__ == '__main__':
+    alpha, rho, gamma, R, nu, num_agents = np.random.random(), np.random.random(), np.random.random(), 10, 4, 10**3# 0.55, 0.6, 0.21, 10, 4, 10**2
+    par = [alpha, rho, gamma, R, nu, num_agents]
+    data, homes, Ngrid = run_PE(par)
+    
+    spatial_plot(data,homes,Ngrid)
+
+    print('Done')
