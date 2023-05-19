@@ -69,10 +69,17 @@ sns.distplot( data["rate"], hist=True, kde=False, rug=False );
 import matplotlib.pyplot as plt
 fig, ax = plt.subplots(1, 1, figsize=(16, 12))
 
+edges = geoutils.load_county_data_edges(data_folder_path)
+incoming = edges.sum(axis=0)
+outgoing = edges.sum(axis=1)
+
+fullData['incoming'] = fullData['id'].apply(lambda x: incoming[x])
+fullData['outgoing'] = fullData['id'].apply(lambda x: outgoing[x])
+
+
 # Set up the color sheme:
 import mapclassify as mc
 scheme = mc.Quantiles(fullData['rate'], k=10)
-edges = geoutils.load_county_data_edges(data_folder_path)
 
 # Map
 gplt.choropleth(fullData, 
