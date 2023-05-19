@@ -1,0 +1,13 @@
+{
+  "path": ".",
+  "unit_test": false,
+  "functions": [
+    {
+      "path": "/home/javierfumanal/Documents/GitHub/MyVisitationLaw/MyStuff/init_state_trials.py",
+      "unit_test": false,
+      "function": "load_edges(studied_csv1: pd.DataFrame, states: list[str], field:str='visitor_flows') -> pd.DataFrame:",
+      "module": null
+    }
+  ],
+  "script": null
+}
