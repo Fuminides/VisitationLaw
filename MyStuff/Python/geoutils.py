@@ -311,3 +311,13 @@ def load_county_data_edges(data_folder_path):
     edges.replace(np.nan, 0, inplace=True)
     
     return edges
+
+def get_city_pop(county_name):
+    import requests
+    import json
+
+    tmp = 'https://public.opendatasoft.com/api/records/1.0/search/?dataset=worldcitiespop&q=%s&sort=population&facet'
+    url = tmp % (county_name + ',' + 'US')
+    response = requests.get(url)
+    data = json.loads(response.text)
+    return data['records'][0]['fields']['population']
